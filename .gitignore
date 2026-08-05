@@ -1,0 +1,23 @@
+# Build output
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+publish/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Publish profiles com dados locais
+*.pubxml.user
+
+# Ficheiros temporarios
+*.tmp
+*.log
+*.cache
+Thumbs.db
+desktop.ini
