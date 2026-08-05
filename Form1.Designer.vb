@@ -124,7 +124,7 @@ Partial Class Form1
         MinimizeBox = False
         Name = "Form1"
         StartPosition = FormStartPosition.CenterScreen
-        Text = "MegaImportador - Números de Série"
+        Text = "MegaImporter - Importador de Números de Série"
         ResumeLayout(False)
         PerformLayout()
     End Sub

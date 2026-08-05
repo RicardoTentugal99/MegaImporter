@@ -27,7 +27,13 @@ Public Class Form1
     Private enviando As Boolean
     Private cancelarEnvio As Boolean
 
+    ' Titulo com a versao. Guardado porque o titulo e usado como barra de progresso no envio.
+    Private tituloBase As String = "MegaImporter"
+
     Private Async Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        tituloBase = Me.Text & "  -  v" & Atualizador.VersaoAtual().ToString()
+        Me.Text = tituloBase
+
         AtualizarContador()
         MostrarVersao()
         txtbpicagem.Focus()
@@ -208,7 +214,7 @@ Public Class Form1
             btnImport.Enabled = True
             btnlimpar.Enabled = True
             txtbpicagem.Enabled = True
-            Me.Text = "MegaImportador - Numeros de Serie"
+            Me.Text = tituloBase
             txtbpicagem.Focus()
         End Try
     End Sub
