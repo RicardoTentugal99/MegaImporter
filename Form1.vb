@@ -27,9 +27,16 @@ Public Class Form1
     Private enviando As Boolean
     Private cancelarEnvio As Boolean
 
-    Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+    Private Async Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         AtualizarContador()
+        MostrarVersao()
         txtbpicagem.Focus()
+
+        ' Apaga o executavel da versao anterior, se ficou de uma atualizacao.
+        Atualizador.LimparResiduos()
+
+        ' Verificacao silenciosa: se nao houver rede ou nova versao, nao incomoda ninguem.
+        Await VerificarAtualizacoesAsync(silencioso:=True)
     End Sub
 
     ' ---------------------------------------------------------------
@@ -246,5 +253,88 @@ Public Class Form1
         RichTextBox1.SelectionStart = RichTextBox1.TextLength
         RichTextBox1.ScrollToCaret()
     End Sub
+
+    ' ---------------------------------------------------------------
+    ' Atualizacoes automaticas (releases publicas do GitHub)
+    ' ---------------------------------------------------------------
+
+    Private Sub MostrarVersao()
+        lnkAtualizar.Text = "Versao " & Atualizador.VersaoAtual().ToString() & " - verificar atualizacoes"
+    End Sub
+
+    Private Async Sub lnkAtualizar_LinkClicked(sender As Object, e As LinkLabelLinkClickedEventArgs) _
+        Handles lnkAtualizar.LinkClicked
+
+        If aVerificar OrElse enviando Then Return
+        Await VerificarAtualizacoesAsync(silencioso:=False)
+    End Sub
+
+    Private aVerificar As Boolean
+
+    Private Async Function VerificarAtualizacoesAsync(silencioso As Boolean) As Task
+        If aVerificar Then Return
+        aVerificar = True
+        lnkAtualizar.Enabled = False
+        If Not silencioso Then lnkAtualizar.Text = "A verificar atualizacoes..."
+
+        Try
+            Dim info As Atualizador.InfoRelease = Await Atualizador.ProcurarAsync()
+
+            If info Is Nothing Then
+                If Not silencioso Then
+                    MessageBox.Show("Ja estas na versao mais recente (" &
+                                    Atualizador.VersaoAtual().ToString() & ").",
+                                    "Atualizacoes", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                End If
+                Return
+            End If
+
+            Dim notas As String = info.Notas
+            If notas.Length > 700 Then notas = notas.Substring(0, 700) & "..."
+
+            Dim resp As DialogResult = MessageBox.Show(
+                "Esta disponivel a versao " & info.Versao.ToString() &
+                " (tens a " & Atualizador.VersaoAtual().ToString() & ")." & Environment.NewLine &
+                "Download: " & Atualizador.FormatarTamanho(info.Tamanho) & Environment.NewLine &
+                Environment.NewLine &
+                notas & Environment.NewLine & Environment.NewLine &
+                "Atualizar agora? A aplicacao reinicia no fim.",
+                "Nova versao disponivel", MessageBoxButtons.YesNo, MessageBoxIcon.Question)
+
+            If resp <> DialogResult.Yes Then
+                MostrarVersao()
+                Return
+            End If
+
+            ' Nao vale a pena atualizar a meio de um envio.
+            If enviando Then
+                MessageBox.Show("Termina o envio em curso antes de atualizar.", "Atualizacoes",
+                                MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                Return
+            End If
+
+            Dim progresso As New Progress(Of Integer)(
+                Sub(pct) lnkAtualizar.Text = "A descarregar... " & pct.ToString() & "%")
+
+            Dim ficheiro As String = Await Atualizador.DescarregarAsync(info, progresso)
+
+            lnkAtualizar.Text = "A instalar..."
+            Atualizador.AplicarEReiniciar(ficheiro)
+
+        Catch ex As Exception
+            MostrarVersao()
+            If Not silencioso Then
+                MessageBox.Show("Nao foi possivel atualizar: " & ex.Message & Environment.NewLine &
+                                Environment.NewLine &
+                                "Podes descarregar manualmente em:" & Environment.NewLine &
+                                Atualizador.UrlPaginaReleases,
+                                "Atualizacoes", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            End If
+        Finally
+            aVerificar = False
+            lnkAtualizar.Enabled = True
+            If lnkAtualizar.Text.StartsWith("A ") Then MostrarVersao()
+        End Try
+    End Function
 
 End Class

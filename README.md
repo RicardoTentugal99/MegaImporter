@@ -26,6 +26,25 @@ Evita a picagem manual campo a campo: colas a lista, confirmas, e a aplicação 
 
 ---
 
+## Atualizações automáticas
+
+A aplicação verifica no arranque se existe uma versão mais recente publicada nas
+[releases](https://github.com/RicardoTentugal99/MegaImporter/releases) deste repositório.
+
+- A verificação é **silenciosa**: sem rede ou sem versão nova, nada acontece e a app arranca normalmente.
+- Havendo versão nova, aparece um aviso com as notas de versão e o tamanho do download.
+- Se aceitares, o novo executável é descarregado, substitui o atual e a aplicação reinicia sozinha.
+- Também podes verificar à mão no link **"Versão x.y.z - verificar atualizações"**, no fundo da janela.
+
+**Não é preciso conta GitHub nem token**: o repositório é público e o download é anónimo.
+O executável antigo fica temporariamente como `MegaImporter.exe.old` e é apagado no arranque seguinte.
+
+> Coloca o `MegaImporter.exe` numa pasta onde o utilizador tenha permissão de escrita
+> (Ambiente de Trabalho, `%LOCALAPPDATA%`, uma pasta pessoal). Dentro de `C:\Program Files`
+> a substituição falha por falta de permissões e a atualização tem de ser feita à mão.
+
+---
+
 ## Requisitos
 
 - Windows 10 / 11

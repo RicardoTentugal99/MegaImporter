@@ -30,6 +30,7 @@ Partial Class Form1
         txtbpicagem = New TextBox()
         lblContador = New Label()
         Label2 = New Label()
+        lnkAtualizar = New LinkLabel()
         SuspendLayout()
         ' 
         ' RichTextBox1
@@ -94,12 +95,23 @@ Partial Class Form1
         Label2.Size = New Size(122, 15)
         Label2.TabIndex = 6
         Label2.Text = "SCANNER - PICAGEM"
-        ' 
+        '
+        ' lnkAtualizar
+        '
+        lnkAtualizar.AutoSize = True
+        lnkAtualizar.Location = New Point(12, 445)
+        lnkAtualizar.Name = "lnkAtualizar"
+        lnkAtualizar.Size = New Size(126, 15)
+        lnkAtualizar.TabIndex = 7
+        lnkAtualizar.TabStop = True
+        lnkAtualizar.Text = "Verificar atualizações"
+        '
         ' Form1
-        ' 
+        '
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(393, 450)
+        ClientSize = New Size(393, 470)
+        Controls.Add(lnkAtualizar)
         Controls.Add(Label2)
         Controls.Add(lblContador)
         Controls.Add(txtbpicagem)
@@ -124,5 +136,6 @@ Partial Class Form1
     Friend WithEvents txtbpicagem As TextBox
     Friend WithEvents lblContador As Label
     Friend WithEvents Label2 As Label
+    Friend WithEvents lnkAtualizar As LinkLabel
 
 End Class
